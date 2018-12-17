@@ -1,0 +1,133 @@
+<meta charset="utf-8">
+<head>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+</head>
+<body>
+
+    <div id="container"></div>
+
+<script>
+
+
+var u = [];
+var v = [];
+let pixel_width = 3;
+
+var N = 150;
+var width = N*pixel_width, height = N*pixel_width;
+var canvas = d3.select('#container')
+  .append('canvas')
+  .attr('width', width)
+  .attr('height', height);
+
+let dt = 1.4;
+
+let Du = 0.16,
+    Dv = 0.08,
+    f  = 0.06,
+    k  = 0.062;
+
+var ctx = canvas.node().getContext('2d');
+
+init();
+draw();
+play();
+
+var main_timer;
+
+var updates_per_frame = 10;
+
+
+function play() {
+    main_timer = d3.interval(function() {
+            for(let step=0; step<updates_per_frame; step++)
+            {
+                update();
+            }
+            draw();
+            }, 1);
+}
+
+function update() {
+    // copy arrays
+    let new_u = [];
+    let new_v = [];
+
+    for(let i=0; i<N; i++)
+    {
+        for(let j=0; j<N; j++)
+        {
+            let n = index(i,j);
+            let n1 = index(i-1,j);
+            let n2 = index(i+1,j);
+            let n3 = index(i,j-1);
+            let n4 = index(i,j+1);
+
+            let _u = u[n];
+            let _v = v[n];
+
+            new_u.push((1-4*Du*dt)*_u + (u[n1]+u[n2]+u[n3]+u[n4])*Du*dt - _u*_v*_v*dt + f*(1-_u)*dt);
+            new_v.push((1-4*Dv*dt)*_v + (v[n1]+v[n2]+v[n3]+v[n4])*Dv*dt + _u*_v*_v*dt - (f+k)*_v*dt);
+        }
+    }
+
+    u = new_u;
+    v = new_v;
+}
+
+function draw() {
+    let min = d3.min(u);
+    let max = d3.max(u);
+    //console.log(min,max);
+    var col = d3.scaleLinear().domain([min,max]).range([0,255])
+    
+    for(let i=0; i<N; i++)
+    {
+        for(let j=0; j<N; j++)
+        {
+            let val = col(u[index(i,j)]);
+            //console.log(val);
+            ctx.fillStyle = "rgb("+val+","+val+","+val+")";
+            ctx.fillRect( i*pixel_width, j*pixel_width, pixel_width, pixel_width );
+        }
+    }
+
+}
+
+function index(i,j){
+    if (i<0)
+        i += N;
+    if (j<0)
+        j += N;
+    return (j%N) * N + (i%N);
+}
+
+function init(){
+    u.length = 0;
+    v.length = 0;
+    let random_strength = 0.2;
+    let N2 = N / 2;
+    let r = N/10;
+    for(let i=0; i<N; i++)
+    {
+        for(let j=0; j<N; j++)
+        {
+            if ((i>N2-r) && (i<N2+r) && (j>N2-r) && (j<N2+r))
+            {
+                u.push(0.50);
+                v.push(0.25);
+            }
+            else
+            {
+                u.push(1-random_strength*Math.random());
+                v.push(random_strength*Math.random());
+            }
+        }
+    }
+}
+
+</script>
+
+
+
+</body>

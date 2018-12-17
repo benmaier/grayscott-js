@@ -11,9 +11,9 @@
 
 var u = [];
 var v = [];
-let pixel_width = 2;
+let pixel_width = 1;
 
-var N = 120;
+var N = 200;
 var width = N*pixel_width, height = N*pixel_width;
 var canvas = d3.select('#container')
   .append('canvas')
@@ -88,8 +88,9 @@ function draw() {
     {
         for(let j=0; j<N; j++)
         {
-            let val = col(u[index(i,j)]);
+            //let val = col(u[index(i,j)]);
             //console.log(val);
+            val = u[index(i,j)] * 255;
             ctx.fillStyle = "rgb("+val+","+val+","+val+")";
             ctx.fillRect( i*pixel_width, j*pixel_width, pixel_width, pixel_width );
         }

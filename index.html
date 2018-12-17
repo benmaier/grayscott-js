@@ -13,7 +13,7 @@ var u = [];
 var v = [];
 let pixel_width = 2;
 
-var N = 200;
+var N = 120;
 var width = N*pixel_width, height = N*pixel_width;
 var canvas = d3.select('#container')
   .append('canvas')
@@ -24,10 +24,10 @@ let dt = 1.4;
 
 let Du = 0.16/2,
     Dv = 0.08/2,
-    f  = 0.025,
+    f  = 0.016,
     k  = 0.062;
 
-var fscale = d3.scaleLinear().domain([0,N]).range([f,2*f]);
+var fscale = d3.scaleLinear().domain([0,N]).range([f,0.05]);
 //var kscale = d3.scaleLinear().domain([0,N]).range([0.062,0.06]);
 
 var ctx = canvas.node().getContext('2d');

@@ -11,19 +11,19 @@
 
 var u = [];
 var v = [];
-let pixel_width = 4;
+let pixel_width = 2;
 
-var N = 150;
+var N = 200;
 var width = N*pixel_width, height = N*pixel_width;
 var canvas = d3.select('#container')
   .append('canvas')
   .attr('width', width)
   .attr('height', height);
 
-let dt = 1;
+let dt = 1.4;
 
-let Du = 0.16,
-    Dv = 0.08,
+let Du = 0.16/2,
+    Dv = 0.08/2,
     f  = 0.025,
     k  = 0.062;
 
@@ -38,7 +38,7 @@ play();
 
 var main_timer;
 
-var updates_per_frame = 30;
+var updates_per_frame = 15;
 
 
 function play() {

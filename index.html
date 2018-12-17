@@ -11,7 +11,7 @@
 
 var u = [];
 var v = [];
-let pixel_width = 3;
+let pixel_width = 4;
 
 var N = 150;
 var width = N*pixel_width, height = N*pixel_width;
@@ -20,12 +20,15 @@ var canvas = d3.select('#container')
   .attr('width', width)
   .attr('height', height);
 
-let dt = 1.4;
+let dt = 1;
 
 let Du = 0.16,
     Dv = 0.08,
-    f  = 0.06,
+    f  = 0.025,
     k  = 0.062;
+
+var fscale = d3.scaleLinear().domain([0,N]).range([f,2*f]);
+//var kscale = d3.scaleLinear().domain([0,N]).range([0.062,0.06]);
 
 var ctx = canvas.node().getContext('2d');
 
@@ -35,7 +38,7 @@ play();
 
 var main_timer;
 
-var updates_per_frame = 10;
+var updates_per_frame = 30;
 
 
 function play() {
@@ -66,8 +69,8 @@ function update() {
             let _u = u[n];
             let _v = v[n];
 
-            new_u.push((1-4*Du*dt)*_u + (u[n1]+u[n2]+u[n3]+u[n4])*Du*dt - _u*_v*_v*dt + f*(1-_u)*dt);
-            new_v.push((1-4*Dv*dt)*_v + (v[n1]+v[n2]+v[n3]+v[n4])*Dv*dt + _u*_v*_v*dt - (f+k)*_v*dt);
+            new_u.push((1-4*Du*dt)*_u + (u[n1]+u[n2]+u[n3]+u[n4])*Du*dt - _u*_v*_v*dt + fscale(i)*(1-_u)*dt);
+            new_v.push((1-4*Dv*dt)*_v + (v[n1]+v[n2]+v[n3]+v[n4])*Dv*dt + _u*_v*_v*dt - (fscale(i)+k)*_v*dt);
         }
     }
 
@@ -99,7 +102,7 @@ function index(i,j){
         i += N;
     if (j<0)
         j += N;
-    return (j%N) * N + (i%N);
+    return (i%N) * N + (j%N);
 }
 
 function init(){
